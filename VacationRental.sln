@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.28803.352
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Api", "src\VacationRental.Api\VacationRental.Api.csproj", "{478C6CBF-6F84-4604-8E31-DEDFDFE10DBC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Api.IntegrationTests", "tests\VacationRental.Api.Tests\VacationRental.Api.IntegrationTests.csproj", "{57FE6E13-7144-459F-BCA8-431087D3DAEE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Api.IntegrationTests", "tests\VacationRental.Api.IntegrationTests\VacationRental.Api.IntegrationTests.csproj", "{57FE6E13-7144-459F-BCA8-431087D3DAEE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{2E4D2FE2-3218-46AA-AA50-F91AF7CB2A5D}"
 EndProject
