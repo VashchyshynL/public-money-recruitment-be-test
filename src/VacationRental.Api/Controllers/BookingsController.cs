@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using VacationRental.Api.Models;
+using VacationRental.Application.Common.Models;
+using VacationRental.Application.Rentals.Queries.GetRentals;
 
 namespace VacationRental.Api.Controllers
 {
@@ -9,14 +13,13 @@ namespace VacationRental.Api.Controllers
     [ApiController]
     public class BookingsController : ControllerBase
     {
-        private readonly IDictionary<int, RentalViewModel> _rentals;
+        private readonly IMediator _mediator;
         private readonly IDictionary<int, BookingViewModel> _bookings;
 
-        public BookingsController(
-            IDictionary<int, RentalViewModel> rentals,
+        public BookingsController(IMediator mediator,
             IDictionary<int, BookingViewModel> bookings)
         {
-            _rentals = rentals;
+            _mediator = mediator;
             _bookings = bookings;
         }
 
@@ -31,11 +34,14 @@ namespace VacationRental.Api.Controllers
         }
 
         [HttpPost]
-        public ResourceIdViewModel Post(BookingBindingModel model)
+        public async Task<ResourceIdViewModel> Post(BookingBindingModel model)
         {
             if (model.Nights <= 0)
                 throw new ApplicationException("Nigts must be positive");
-            if (!_rentals.ContainsKey(model.RentalId))
+
+            var rental = await _mediator.Send(new GetRentalByIdQuery { RentalId = model.RentalId });
+            // todo: extract validation logic into validator
+            if (rental == null)
                 throw new ApplicationException("Rental not found");
 
             for (var i = 0; i < model.Nights; i++)
@@ -51,7 +57,7 @@ namespace VacationRental.Api.Controllers
                         count++;
                     }
                 }
-                if (count >= _rentals[model.RentalId].Units)
+                if (count >= rental.Units)
                     throw new ApplicationException("Not available");
             }
 
