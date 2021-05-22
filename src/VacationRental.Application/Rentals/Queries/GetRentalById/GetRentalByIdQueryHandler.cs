@@ -2,10 +2,8 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
-using VacationRental.Application.Common.Exceptions;
 using VacationRental.Application.Common.Interfaces;
 using VacationRental.Application.Common.Models;
-using VacationRental.Domain.Entities;
 
 namespace VacationRental.Application.Rentals.Queries.GetRentalById
 {

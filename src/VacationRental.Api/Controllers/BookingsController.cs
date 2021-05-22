@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using VacationRental.Api.Models;
+using VacationRental.Application.Bookings.Commands.CreateBooking;
+using VacationRental.Application.Bookings.Queries.GetBookingById;
 using VacationRental.Application.Common.Models;
-using VacationRental.Application.Rentals.Queries.GetRentalById;
 
 namespace VacationRental.Api.Controllers
 {
@@ -14,65 +13,28 @@ namespace VacationRental.Api.Controllers
     public class BookingsController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly IDictionary<int, BookingViewModel> _bookings;
 
-        public BookingsController(IMediator mediator,
-            IDictionary<int, BookingViewModel> bookings)
+        public BookingsController(IMediator mediator)
         {
             _mediator = mediator;
-            _bookings = bookings;
         }
 
         [HttpGet]
         [Route("{bookingId:int}")]
-        public BookingViewModel Get(int bookingId)
+        public async Task<BookingViewModel> Get(int bookingId)
         {
-            if (!_bookings.ContainsKey(bookingId))
-                throw new ApplicationException("Booking not found");
-
-            return _bookings[bookingId];
+            return await _mediator.Send(new GetBookingByIdQuery { BookingId = bookingId });
         }
 
         [HttpPost]
         public async Task<ResourceIdViewModel> Post(BookingBindingModel model)
         {
-            if (model.Nights <= 0)
-                throw new ApplicationException("Nigts must be positive");
-
-            var rental = await _mediator.Send(new GetRentalByIdQuery { RentalId = model.RentalId });
-            // todo: extract validation logic into validator
-            if (rental == null)
-                throw new ApplicationException("Rental not found");
-
-            for (var i = 0; i < model.Nights; i++)
+            return await _mediator.Send(new CreateBookingCommand
             {
-                var count = 0;
-                foreach (var booking in _bookings.Values)
-                {
-                    if (booking.RentalId == model.RentalId
-                        && (booking.Start <= model.Start.Date && booking.Start.AddDays(booking.Nights) > model.Start.Date)
-                        || (booking.Start < model.Start.AddDays(model.Nights) && booking.Start.AddDays(booking.Nights) >= model.Start.AddDays(model.Nights))
-                        || (booking.Start > model.Start && booking.Start.AddDays(booking.Nights) < model.Start.AddDays(model.Nights)))
-                    {
-                        count++;
-                    }
-                }
-                if (count >= rental.Units)
-                    throw new ApplicationException("Not available");
-            }
-
-
-            var key = new ResourceIdViewModel { Id = _bookings.Keys.Count + 1 };
-
-            _bookings.Add(key.Id, new BookingViewModel
-            {
-                Id = key.Id,
-                Nights = model.Nights,
-                RentalId = model.RentalId,
-                Start = model.Start.Date
+                RentalId = model.RentalId, 
+                Start = model.Start, 
+                Nights = model.Nights
             });
-
-            return key;
         }
     }
 }

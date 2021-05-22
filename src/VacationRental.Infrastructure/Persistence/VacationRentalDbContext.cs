@@ -12,5 +12,6 @@ namespace VacationRental.Infrastructure.Persistence
         }
 
         public DbSet<Rental> Rentals { get; set; }
+        public DbSet<Booking> Bookings { get; set; }
     }
 }

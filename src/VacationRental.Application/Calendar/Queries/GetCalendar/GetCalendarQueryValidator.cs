@@ -3,15 +3,18 @@ using System.Threading.Tasks;
 using FluentValidation;
 using VacationRental.Application.Common.Interfaces;
 
-namespace VacationRental.Application.Rentals.Queries.GetRentalById
+namespace VacationRental.Application.Calendar.Queries.GetCalendar
 {
-    public class GetRentalByIdQueryValidator : AbstractValidator<GetRentalByIdQuery>
+    public class GetCalendarQueryValidator : AbstractValidator<GetCalendarQuery>
     {
         private readonly IVacationRentalDbContext _context;
 
-        public GetRentalByIdQueryValidator(IVacationRentalDbContext context)
+        public GetCalendarQueryValidator(IVacationRentalDbContext context)
         {
             _context = context;
+
+            RuleFor(b => b.Nights)
+                .GreaterThan(0).WithMessage("Nights must be positive");
 
             RuleFor(r => r.RentalId)
                 .MustAsync(RentalExists).WithMessage("Rental not found");

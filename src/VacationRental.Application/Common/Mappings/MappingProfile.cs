@@ -10,6 +10,9 @@ namespace VacationRental.Application.Common.Mappings
         {
             CreateMap<Rental, RentalViewModel>();
             CreateMap<Rental, ResourceIdViewModel>();
+
+            CreateMap<Booking, BookingViewModel>();
+            CreateMap<Booking, ResourceIdViewModel>();
         }
     }
 }
