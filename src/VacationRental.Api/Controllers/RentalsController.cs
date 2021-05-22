@@ -29,7 +29,11 @@ namespace VacationRental.Api.Controllers
         [HttpPost]
         public async Task<ResourceIdViewModel> Post(RentalBindingModel model)
         {
-            return await _mediator.Send(new CreateRentalCommand {Units = model.Units});
+            return await _mediator.Send(new CreateRentalCommand
+            {
+                Units = model.Units, 
+                PreparationTimeInDays = model.PreparationTimeInDays
+            });
         }
     }
 }

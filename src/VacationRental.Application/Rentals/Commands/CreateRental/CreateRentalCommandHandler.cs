@@ -21,7 +21,12 @@ namespace VacationRental.Application.Rentals.Commands.CreateRental
 
         public async Task<ResourceIdViewModel> Handle(CreateRentalCommand command, CancellationToken cancellationToken)
         {
-            var rental = new Rental {Units = command.Units};
+            var rental = new Rental
+            {
+                Units = command.Units,
+                PreparationTimeInDays = command.PreparationTimeInDays
+            };
+
             _context.Rentals.Add(rental);
             await _context.SaveChangesAsync(cancellationToken);
 
