@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using VacationRental.Api.Models;
 using VacationRental.Application.Common.Models;
 using VacationRental.Application.Rentals.Commands.CreateRental;
-using VacationRental.Application.Rentals.Queries.GetRentals;
+using VacationRental.Application.Rentals.Queries.GetRentalById;
 
 namespace VacationRental.Api.Controllers
 {

@@ -7,7 +7,7 @@ using VacationRental.Application.Common.Interfaces;
 using VacationRental.Application.Common.Models;
 using VacationRental.Domain.Entities;
 
-namespace VacationRental.Application.Rentals.Queries.GetRentals
+namespace VacationRental.Application.Rentals.Queries.GetRentalById
 {
     public class GetRentalByIdQueryHandler : IRequestHandler<GetRentalByIdQuery, RentalViewModel>
     {

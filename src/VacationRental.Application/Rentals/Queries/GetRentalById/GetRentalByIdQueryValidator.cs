@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using FluentValidation;
 using VacationRental.Application.Common.Interfaces;
 
-namespace VacationRental.Application.Rentals.Queries.GetRentals
+namespace VacationRental.Application.Rentals.Queries.GetRentalById
 {
     public class GetRentalByIdQueryValidator : AbstractValidator<GetRentalByIdQuery>
     {
