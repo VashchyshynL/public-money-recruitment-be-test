@@ -10,12 +10,12 @@ namespace VacationRental.Application.Rentals.Commands.CreateRental
 {
     public class CreateRentalCommandHandler : IRequestHandler<CreateRentalCommand, ResourceIdViewModel>
     {
-        private readonly IVacationRentalDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public CreateRentalCommandHandler(IVacationRentalDbContext context, IMapper mapper)
+        public CreateRentalCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -27,8 +27,8 @@ namespace VacationRental.Application.Rentals.Commands.CreateRental
                 PreparationTimeInDays = command.PreparationTimeInDays
             };
 
-            _context.Rentals.Add(rental);
-            await _context.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.Rentals.AddAsync(rental);
+            await _unitOfWork.CompleteAsync();
 
             return _mapper.Map<ResourceIdViewModel>(rental);
         }

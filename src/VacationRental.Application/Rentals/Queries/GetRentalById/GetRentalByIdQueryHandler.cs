@@ -9,18 +9,18 @@ namespace VacationRental.Application.Rentals.Queries.GetRentalById
 {
     public class GetRentalByIdQueryHandler : IRequestHandler<GetRentalByIdQuery, RentalViewModel>
     {
-        private readonly IVacationRentalDbContext _dbContext;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public GetRentalByIdQueryHandler(IVacationRentalDbContext dbContext, IMapper mapper)
+        public GetRentalByIdQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _dbContext = dbContext;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
         public async Task<RentalViewModel> Handle(GetRentalByIdQuery query, CancellationToken cancellationToken)
         {
-            var rental = await _dbContext.Rentals.FindAsync(query.RentalId);
+            var rental = await _unitOfWork.Rentals.GetByIdAsync(query.RentalId);
 
             return _mapper.Map<RentalViewModel>(rental);
         }

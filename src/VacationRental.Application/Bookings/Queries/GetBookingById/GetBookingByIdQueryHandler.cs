@@ -9,19 +9,19 @@ namespace VacationRental.Application.Bookings.Queries.GetBookingById
 {
     public class GetBookingByIdQueryHandler : IRequestHandler<GetBookingByIdQuery, BookingViewModel>
     {
-        private readonly IVacationRentalDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public GetBookingByIdQueryHandler(IVacationRentalDbContext context, IMapper mapper)
+        public GetBookingByIdQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
         public async Task<BookingViewModel> Handle(GetBookingByIdQuery query, CancellationToken cancellationToken)
         {
-            var booking = await _context.Bookings.FindAsync(query.BookingId);
-            
+            var booking = await _unitOfWork.Bookings.GetByIdAsync(query.BookingId);
+
             return _mapper.Map<BookingViewModel>(booking);
         }
     }

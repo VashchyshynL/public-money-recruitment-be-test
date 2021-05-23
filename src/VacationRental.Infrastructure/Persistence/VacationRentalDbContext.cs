@@ -1,10 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using VacationRental.Application.Common.Interfaces;
 using VacationRental.Domain.Entities;
 
 namespace VacationRental.Infrastructure.Persistence
 {
-    public class VacationRentalDbContext : DbContext, IVacationRentalDbContext
+    public class VacationRentalDbContext : DbContext
     {
         public VacationRentalDbContext(DbContextOptions<VacationRentalDbContext> options) 
             : base(options)

@@ -1,52 +1,43 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentValidation;
 using VacationRental.Application.Common.Interfaces;
+using ValidationException = VacationRental.Application.Common.Exceptions.ValidationException;
 
 namespace VacationRental.Application.Bookings.Commands.CreateBooking
 {
     public class CreateBookingCommandValidator : AbstractValidator<CreateBookingCommand>
     {
-        private readonly IVacationRentalDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CreateBookingCommandValidator(IVacationRentalDbContext context)
+        public CreateBookingCommandValidator(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
 
             RuleFor(b => b.Nights)
                 .GreaterThan(0).WithMessage("Nights must be positive");
 
             RuleFor(b => b.RentalId)
-                .MustAsync(RentalExists).WithMessage("Rental not found");
+                .GreaterThan(0).WithMessage("RentalId should be greater than 0");
 
             RuleFor(b => b)
-                .MustAsync(BookingAvailable).WithMessage("Not available");
+                .MustAsync(IsBookingAvailable).WithMessage("Booking not available");
         }
 
-        private async Task<bool> RentalExists(int rentalId, CancellationToken cancellationToken)
+        private async Task<bool> IsBookingAvailable(CreateBookingCommand command, CancellationToken cancellationToken)
         {
-            var rental = await _context.Rentals.FindAsync(rentalId);
-            return rental != null;
-        }
+            var rental = await _unitOfWork.Rentals.GetRentalWithBookings(command.RentalId, cancellationToken);
 
-        private async Task<bool> BookingAvailable(CreateBookingCommand command, CancellationToken cancellationToken)
-        {
-            var count = _context.Bookings.Count(b => b.RentalId == command.RentalId && (b.Start <= command.Start.Date &&
-                                                         b.Start.AddDays(b.Nights) >
-                                                         command.Start.Date) ||
-                                                     (b.Start < command.Start.AddDays(command.Nights) && b.Start.AddDays(b.Nights) >=
-                                                         command.Start.AddDays(command.Nights)) || (b.Start > command.Start &&
-                                                         b.Start.AddDays(b.Nights) <
-                                                         command.Start.AddDays(command.Nights)));
+            if (rental == null)
+                throw new ValidationException(nameof(command.RentalId), "Rental not found");
+           
+            var count = rental.Bookings.Count(b => (b.Start <= command.Start.Date && b.Start.AddDays(b.Nights) > command.Start.Date) 
+                                                    || (b.Start < command.Start.AddDays(command.Nights) && b.Start.AddDays(b.Nights) >= command.Start.AddDays(command.Nights)) 
+                                                    || (b.Start > command.Start && b.Start.AddDays(b.Nights) < command.Start.AddDays(command.Nights)));
 
-            var rental = await _context.Rentals.FindAsync(command.RentalId);
-
-            if (count >= rental.Units)
-                throw new ApplicationException("Not available");
-
-            return true;
+            return rental.Units > count;
+           
         }
     }
 }

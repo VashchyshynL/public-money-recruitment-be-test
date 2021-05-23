@@ -10,12 +10,12 @@ namespace VacationRental.Application.Bookings.Commands.CreateBooking
 {
     public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand, ResourceIdViewModel>
     {
-        private readonly IVacationRentalDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public CreateBookingCommandHandler(IVacationRentalDbContext context, IMapper mapper)
+        public CreateBookingCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -28,8 +28,8 @@ namespace VacationRental.Application.Bookings.Commands.CreateBooking
                 Nights = command.Nights
             };
 
-            _context.Bookings.Add(booking);
-            await _context.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.Bookings.AddAsync(booking);
+            await _unitOfWork.CompleteAsync();
 
             return _mapper.Map<ResourceIdViewModel>(booking);
         }

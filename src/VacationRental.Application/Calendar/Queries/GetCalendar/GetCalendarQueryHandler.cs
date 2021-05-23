@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
+using VacationRental.Application.Common.Exceptions;
 using VacationRental.Application.Common.Interfaces;
 using VacationRental.Application.Common.Models;
 
@@ -11,11 +11,11 @@ namespace VacationRental.Application.Calendar.Queries.GetCalendar
 {
     public class GetCalendarQueryHandler : IRequestHandler<GetCalendarQuery, CalendarViewModel>
     {
-        private readonly IVacationRentalDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public GetCalendarQueryHandler(IVacationRentalDbContext context)
+        public GetCalendarQueryHandler(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<CalendarViewModel> Handle(GetCalendarQuery query, CancellationToken cancellationToken)
@@ -26,6 +26,10 @@ namespace VacationRental.Application.Calendar.Queries.GetCalendar
                 Dates = new List<CalendarDateViewModel>()
             };
 
+            var rental = await _unitOfWork.Rentals.GetRentalWithBookings(query.RentalId, cancellationToken);
+            if (rental == null)
+                throw new NotFoundException("Rental not found");
+
             for (var i = 0; i < query.Nights; i++)
             {
                 var date = new CalendarDateViewModel
@@ -34,13 +38,10 @@ namespace VacationRental.Application.Calendar.Queries.GetCalendar
                     Bookings = new List<CalendarBookingViewModel>()
                 };
 
-                var bookings = await _context.Bookings
-                    .Where(b => 
-                        b.RentalId == query.RentalId
-                        && b.Start <= date.Date 
-                        && b.Start.AddDays(b.Nights) > date.Date)
-                    .Select(b => new CalendarBookingViewModel {Id = b.Id})
-                    .ToArrayAsync(cancellationToken: cancellationToken);
+                var bookings = rental.Bookings
+                    .Where(b => b.Start <= date.Date 
+                                && b.Start.AddDays(b.Nights) > date.Date)
+                    .Select(b => new CalendarBookingViewModel {Id = b.Id});
 
                 date.Bookings.AddRange(bookings);
 

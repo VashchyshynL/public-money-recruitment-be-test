@@ -13,6 +13,11 @@ namespace VacationRental.Application.Common.Exceptions
             Errors = new Dictionary<string, string[]>();
         }
 
+        public ValidationException(string propertyName, string message) : this()
+        {
+            Errors.TryAdd(propertyName, new []{ message });
+        }
+
         public ValidationException(IEnumerable<ValidationFailure> failures)
             : this()
         {

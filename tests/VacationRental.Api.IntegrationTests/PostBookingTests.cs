@@ -59,7 +59,7 @@ namespace VacationRental.Api.IntegrationTests
         }
 
         [Fact]
-        public async Task GivenCompleteRequest_WhenPostBooking_ThenAPostReturnsErrorWhenThereIsOverbooking()
+        public async Task GivenCompleteRequest_WhenPostBooking_ThenAPostReturnsBadRequestWhenThereIsOverbooking()
         {
             var postRentalRequest = new RentalBindingModel
             {
@@ -94,7 +94,7 @@ namespace VacationRental.Api.IntegrationTests
 
             using (var postBooking2Response = await _client.PostAsJsonAsync($"/api/v1/bookings", postBooking2Request))
             {
-                Assert.Equal(HttpStatusCode.InternalServerError, postBooking2Response.StatusCode);
+                Assert.Equal(HttpStatusCode.BadRequest, postBooking2Response.StatusCode);
             }
         }
     }

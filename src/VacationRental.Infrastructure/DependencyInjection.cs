@@ -12,7 +12,7 @@ namespace VacationRental.Infrastructure
             services.AddDbContext<VacationRentalDbContext>(options =>
                     options.UseInMemoryDatabase("VacationRentalDb"));
            
-            services.AddScoped<IVacationRentalDbContext>(provider => provider.GetService<VacationRentalDbContext>());
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;
         }
