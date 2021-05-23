@@ -37,6 +37,7 @@ namespace VacationRental.Api.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(ResourceIdViewModel), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status409Conflict)]
         public async Task<ActionResult<ResourceIdViewModel>> Post(BookingBindingModel model)
         {
             var booking = await _mediator.Send(new CreateBookingCommand

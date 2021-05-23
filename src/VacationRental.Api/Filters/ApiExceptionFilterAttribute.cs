@@ -17,7 +17,8 @@ namespace VacationRental.Api.Filters
             _exceptionHandlers = new Dictionary<Type, Action<ExceptionContext>>
             {
                 { typeof(ValidationException), HandleValidationException },
-                { typeof(NotFoundException), HandleNotFoundException }
+                { typeof(NotFoundException), HandleNotFoundException },
+                { typeof(ConflictException), HandleConflictException }
             };
         }
 
@@ -52,6 +53,15 @@ namespace VacationRental.Api.Filters
             context.ExceptionHandled = true;
         }
 
+        private static void HandleValidationException(ExceptionContext context)
+        {
+            var exception = context.Exception as ValidationException;
+            var errorDetails = string.Concat(exception.Errors.Values.SelectMany(x => x));
+            context.Result = new BadRequestObjectResult(errorDetails);
+
+            context.ExceptionHandled = true;
+        }
+
         private static void HandleNotFoundException(ExceptionContext context)
         {
             var exception = context.Exception as NotFoundException;
@@ -60,12 +70,12 @@ namespace VacationRental.Api.Filters
 
             context.ExceptionHandled = true;
         }
-
-        private static void HandleValidationException(ExceptionContext context)
+        
+        private static void HandleConflictException(ExceptionContext context)
         {
-            var exception = context.Exception as ValidationException;
-            var errorDetails = string.Concat(exception.Errors.Values.SelectMany(x => x));
-            context.Result = new BadRequestObjectResult(errorDetails);
+            var exception = context.Exception as ConflictException;
+
+            context.Result = new ConflictObjectResult(exception?.Message);
 
             context.ExceptionHandled = true;
         }

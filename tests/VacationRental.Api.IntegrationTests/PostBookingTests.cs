@@ -23,7 +23,8 @@ namespace VacationRental.Api.IntegrationTests
         {
             var postRentalRequest = new RentalBindingModel
             {
-                Units = 4
+                Units = 4,
+                PreparationTimeInDays = 0
             };
 
             ResourceIdViewModel postRentalResult;
@@ -63,7 +64,8 @@ namespace VacationRental.Api.IntegrationTests
         {
             var postRentalRequest = new RentalBindingModel
             {
-                Units = 1
+                Units = 1,
+                PreparationTimeInDays = 0
             };
 
             ResourceIdViewModel postRentalResult;
@@ -94,7 +96,7 @@ namespace VacationRental.Api.IntegrationTests
 
             using (var postBooking2Response = await _client.PostAsJsonAsync($"/api/v1/bookings", postBooking2Request))
             {
-                Assert.Equal(HttpStatusCode.BadRequest, postBooking2Response.StatusCode);
+                Assert.Equal(HttpStatusCode.Conflict, postBooking2Response.StatusCode);
             }
         }
     }
