@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using VacationRental.Api.Models;
 using VacationRental.Application.Bookings.Commands.CreateBooking;
@@ -21,20 +22,31 @@ namespace VacationRental.Api.Controllers
 
         [HttpGet]
         [Route("{bookingId:int}")]
-        public async Task<BookingViewModel> Get(int bookingId)
+        [ProducesResponseType(typeof(BookingViewModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<BookingViewModel>> Get(int bookingId)
         {
-            return await _mediator.Send(new GetBookingByIdQuery { BookingId = bookingId });
+            var booking = await _mediator.Send(new GetBookingByIdQuery { BookingId = bookingId });
+            if (booking == null)
+                return NotFound("Booking not found");
+
+            return Ok(booking);
         }
 
         [HttpPost]
-        public async Task<ResourceIdViewModel> Post(BookingBindingModel model)
+        [ProducesResponseType(typeof(ResourceIdViewModel), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<ResourceIdViewModel>> Post(BookingBindingModel model)
         {
-            return await _mediator.Send(new CreateBookingCommand
+            var booking = await _mediator.Send(new CreateBookingCommand
             {
-                RentalId = model.RentalId, 
-                Start = model.Start, 
+                RentalId = model.RentalId,
+                Start = model.Start,
                 Nights = model.Nights
             });
+            
+            return CreatedAtAction(nameof(Get), new { bookingId = booking.Id }, booking);
         }
     }
 }

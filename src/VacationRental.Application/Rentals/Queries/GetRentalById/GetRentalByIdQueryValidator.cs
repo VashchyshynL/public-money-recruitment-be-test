@@ -1,26 +1,13 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using FluentValidation;
-using VacationRental.Application.Common.Interfaces;
+﻿using FluentValidation;
 
 namespace VacationRental.Application.Rentals.Queries.GetRentalById
 {
     public class GetRentalByIdQueryValidator : AbstractValidator<GetRentalByIdQuery>
     {
-        private readonly IVacationRentalDbContext _context;
-
-        public GetRentalByIdQueryValidator(IVacationRentalDbContext context)
+        public GetRentalByIdQueryValidator()
         {
-            _context = context;
-
             RuleFor(r => r.RentalId)
-                .MustAsync(RentalExists).WithMessage("Rental not found");
-        }
-
-        private async Task<bool> RentalExists(int rentalId, CancellationToken cancellationToken)
-        {
-            var rental = await _context.Rentals.FindAsync(rentalId);
-            return rental != null;
+                .GreaterThan(0).WithMessage("RentalId should be greater than 0");
         }
     }
 }

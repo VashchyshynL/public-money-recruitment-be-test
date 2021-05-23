@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using VacationRental.Application.Calendar.Queries.GetCalendar;
 using VacationRental.Application.Common.Models;
@@ -19,6 +20,8 @@ namespace VacationRental.Api.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(CalendarViewModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         public async Task<CalendarViewModel> Get(int rentalId, DateTime start, int nights)
         {
             return await _mediator.Send(new GetCalendarQuery

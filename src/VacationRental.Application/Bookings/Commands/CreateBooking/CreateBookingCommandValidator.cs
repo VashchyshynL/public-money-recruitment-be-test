@@ -19,13 +19,13 @@ namespace VacationRental.Application.Bookings.Commands.CreateBooking
                 .GreaterThan(0).WithMessage("Nights must be positive");
 
             RuleFor(b => b.RentalId)
-                .MustAsync(RentalExist).WithMessage("Rental not found");
+                .MustAsync(RentalExists).WithMessage("Rental not found");
 
             RuleFor(b => b)
                 .MustAsync(BookingAvailable).WithMessage("Not available");
         }
 
-        private async Task<bool> RentalExist(int rentalId, CancellationToken cancellationToken)
+        private async Task<bool> RentalExists(int rentalId, CancellationToken cancellationToken)
         {
             var rental = await _context.Rentals.FindAsync(rentalId);
             return rental != null;
