@@ -24,16 +24,14 @@ namespace VacationRental.Application.Bookings.Commands.CreateBooking
 
         public async Task<ResourceIdViewModel> Handle(CreateBookingCommand command, CancellationToken cancellationToken)
         {
-            var rental = await _unitOfWork.Rentals.GetRentalWithBookings(command.RentalId, cancellationToken);
+            var rental = await _unitOfWork.Rentals.GetByIdAsync(command.RentalId);
 
             if (rental == null)
                 throw new ValidationException(nameof(command.RentalId), "Rental not found");
 
-            var overlappingBookings = rental.Bookings.Where(b =>
-                (b.Start <= command.Start.Date && b.End.AddDays(rental.PreparationTimeInDays) > command.Start.Date)
-                || (b.Start < command.End.AddDays(rental.PreparationTimeInDays) && b.End.AddDays(rental.PreparationTimeInDays) >= command.End.AddDays(rental.PreparationTimeInDays))
-                || (b.Start > command.Start && b.End.AddDays(rental.PreparationTimeInDays) < command.End.AddDays(rental.PreparationTimeInDays))).ToArray();
-
+            var overlappingBookings = 
+                await _unitOfWork.Bookings.GetOverlappingBookings(rental.Id, rental.PreparationTimeInDays, command.Start, command.End);
+                
             var availableUnit = GetAvailableForBookingUnit(overlappingBookings, rental.Units);
 
             var booking = new Booking
@@ -49,7 +47,6 @@ namespace VacationRental.Application.Bookings.Commands.CreateBooking
 
             return _mapper.Map<ResourceIdViewModel>(booking);
         }
-
 
         private static int GetAvailableForBookingUnit(IReadOnlyCollection<Booking> overlappingBookings, int rentalUnits)
         {

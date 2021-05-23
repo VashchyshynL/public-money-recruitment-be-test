@@ -1,5 +1,8 @@
-﻿using System.Threading;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using VacationRental.Application.Common.Interfaces;
 using VacationRental.Domain.Entities;
 
@@ -12,10 +15,16 @@ namespace VacationRental.Infrastructure.Persistence.Repositories
 
         }
 
-        public async Task<bool> IsExists(int rentalId, CancellationToken cancellationToken)
+        public async Task<IReadOnlyCollection<Booking>> GetOverlappingBookings(int rentalId, int preparationDays, DateTime startDate, DateTime endDate)
         {
-            var rental = await GetByIdAsync(rentalId);
-            return rental != null;
+            return await Context.Bookings
+                .AsNoTracking()
+                .Where(b => 
+                    b.RentalId == rentalId 
+                    && ((b.Start <= startDate && b.End.AddDays(preparationDays) > startDate)
+                        || (b.Start < endDate.AddDays(preparationDays) && b.End.AddDays(preparationDays) >= endDate.AddDays(preparationDays))
+                        || (b.Start > startDate && b.End.AddDays(preparationDays) < endDate.AddDays(preparationDays))))
+                .ToArrayAsync();
         }
     }
 }

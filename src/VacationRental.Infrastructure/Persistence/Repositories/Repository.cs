@@ -1,14 +1,13 @@
 ﻿using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using VacationRental.Application.Common.Interfaces;
 
 namespace VacationRental.Infrastructure.Persistence.Repositories
 {
     public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
-        protected readonly DbContext Context;
+        protected readonly VacationRentalDbContext Context;
 
-        public Repository(DbContext context)
+        public Repository(VacationRentalDbContext context)
         {
             Context = context;
         }
