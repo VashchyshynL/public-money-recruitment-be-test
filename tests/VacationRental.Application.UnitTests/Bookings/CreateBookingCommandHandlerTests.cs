@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using Moq;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using VacationRental.Application.Bookings.Commands.CreateBooking;
 using VacationRental.Application.Common.Exceptions;
@@ -44,12 +42,12 @@ namespace VacationRental.Application.UnitTests.Bookings
         }
 
         [Fact]
-        public async Task Handle_Should_ThrowConflictException_When_NoAvailableUnitsForBooking()
+        public async Task Handle_Should_ThrowConflictException_When_NoAvailableUnitsExist()
         {
             var rental = new Rental { Id = 1, Units = 1, PreparationTimeInDays = 1 };
             var existingBooking = new Booking { Id = 1, RentalId = rental.Id, Nights = 2, Start = new DateTime(2001, 01, 01) };
 
-            _rentalsRepositoryMock.Setup(b => b.GetByIdAsync(1)).ReturnsAsync(rental);
+            _rentalsRepositoryMock.Setup(b => b.GetByIdAsync(rental.Id)).ReturnsAsync(rental);
 
             _bookingsRepositoryMock
                 .Setup(b => b.GetOverlappingBookings(rental.Id, rental.PreparationTimeInDays, new DateTime(2001, 01, 01), new DateTime(2001, 01, 03)))
@@ -91,6 +89,7 @@ namespace VacationRental.Application.UnitTests.Bookings
             var result = await _sut.Handle(createCommand, default);
 
             // Assert
+            Assert.Equal(0, result.Id);
             _bookingsRepositoryMock.Verify(b => b.AddAsync(It.Is<Booking>(
                 x => x.RentalId == newBooking.RentalId
                 && x.Nights == newBooking.Nights
@@ -98,7 +97,6 @@ namespace VacationRental.Application.UnitTests.Bookings
                 && x.Unit == expectedNewBookingUnit)), Times.Once());
 
             _unitOfWorkMock.Verify(u => u.CompleteAsync(), Times.Once);
-            Assert.Equal(0, result.Id);
         }
     }
 }

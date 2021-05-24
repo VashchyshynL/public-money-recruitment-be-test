@@ -12,7 +12,6 @@ namespace VacationRental.Infrastructure.Persistence.Repositories
     {
         public BookingsRepository(VacationRentalDbContext context) : base(context)
         {
-
         }
 
         public async Task<IReadOnlyCollection<Booking>> GetOverlappingBookings(int rentalId, int preparationDays, DateTime startDate, DateTime endDate)

@@ -1,11 +1,14 @@
 ﻿using FluentValidation;
 
-namespace VacationRental.Application.Rentals.Commands.CreateRental
+namespace VacationRental.Application.Rentals.Commands.UpdateRental
 {
-    public class CreateRentalCommandValidator : AbstractValidator<CreateRentalCommand>
+    public class UpdateRentalCommandValidator : AbstractValidator<UpdateRentalCommand>
     {
-        public CreateRentalCommandValidator()
+        public UpdateRentalCommandValidator()
         {
+            RuleFor(b => b.RentalId)
+                .GreaterThan(0).WithMessage("RentalId should be greater than 0");
+
             RuleFor(r => r.Units)
                 .GreaterThan(0).WithMessage("Number of units should be greater that 0");
 

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using VacationRental.Api.Models;
 using VacationRental.Application.Common.Models;
 using VacationRental.Application.Rentals.Commands.CreateRental;
+using VacationRental.Application.Rentals.Commands.UpdateRental;
 using VacationRental.Application.Rentals.Queries.GetRentalById;
 
 namespace VacationRental.Api.Controllers
@@ -46,6 +47,24 @@ namespace VacationRental.Api.Controllers
             });
 
             return CreatedAtAction(nameof(Get), new {rentalId = rental.Id}, rental);
+        }
+
+        [HttpPut]
+        [Route("{id:int}")]
+        [ProducesResponseType(typeof(ResourceIdViewModel), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ResourceIdViewModel), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResourceIdViewModel), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ResourceIdViewModel), StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> Update(int id, RentalBindingModel model)
+        {
+            await _mediator.Send(new UpdateRentalCommand
+            {
+                RentalId = id,
+                Units = model.Units,
+                PreparationTimeInDays = model.PreparationTimeInDays
+            });
+
+            return NoContent();
         }
     }
 }
