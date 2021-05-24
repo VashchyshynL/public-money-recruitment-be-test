@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using VacationRental.Application.Common.Constants;
 
 namespace VacationRental.Application.Calendar.Queries.GetCalendar
 {
@@ -7,7 +8,7 @@ namespace VacationRental.Application.Calendar.Queries.GetCalendar
         public GetCalendarQueryValidator()
         {
             RuleFor(b => b.Nights)
-                .GreaterThan(0).WithMessage("Nights must be positive");
+                .GreaterThan(0).WithMessage(BookingValidationMessages.PositiveNights);
         }
     }
 }

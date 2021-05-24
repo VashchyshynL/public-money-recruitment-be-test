@@ -56,7 +56,7 @@ namespace VacationRental.Api.Filters
         private static void HandleValidationException(ExceptionContext context)
         {
             var exception = context.Exception as ValidationException;
-            var errorDetails = string.Concat(exception.Errors.Values.SelectMany(x => x));
+            var errorDetails = string.Join(Environment.NewLine, exception?.Errors.Values.SelectMany(x => x) ?? Array.Empty<string>());
             context.Result = new BadRequestObjectResult(errorDetails);
 
             context.ExceptionHandled = true;

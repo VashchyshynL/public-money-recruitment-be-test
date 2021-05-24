@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using VacationRental.Application.Common.Constants;
 using VacationRental.Application.Common.Exceptions;
 using VacationRental.Application.Common.Interfaces;
 using VacationRental.Application.Common.Models;
@@ -22,15 +23,15 @@ namespace VacationRental.Application.Calendar.Queries.GetCalendar
 
         public async Task<CalendarViewModel> Handle(GetCalendarQuery query, CancellationToken cancellationToken)
         {
+            var rental = await _unitOfWork.Rentals.GetByIdAsync(query.RentalId);
+            if (rental == null)
+                throw new ValidationException(nameof(query.RentalId), RentalExceptionMessages.NotFound);
+
             var calendar = new CalendarViewModel
             {
                 RentalId = query.RentalId,
                 Dates = new List<CalendarDateViewModel>()
             };
-
-            var rental = await _unitOfWork.Rentals.GetByIdAsync(query.RentalId);
-            if (rental == null)
-                throw new ValidationException(nameof(query.RentalId), "Rental not found");
 
             var overlappingBookings = await _unitOfWork.Bookings.GetOverlappingBookings(
                 rental.Id, rental.PreparationTimeInDays, query.Start, query.Start.AddDays(query.Nights));

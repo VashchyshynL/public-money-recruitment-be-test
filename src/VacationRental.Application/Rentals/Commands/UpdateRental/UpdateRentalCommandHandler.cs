@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using VacationRental.Application.Common.Constants;
 using VacationRental.Application.Common.Exceptions;
 using VacationRental.Application.Common.Interfaces;
 using VacationRental.Domain.Entities;
@@ -22,14 +23,14 @@ namespace VacationRental.Application.Rentals.Commands.UpdateRental
             var rental = await _unitOfWork.Rentals.GetByIdAsync(command.RentalId);
 
             if (rental == null)
-                throw new NotFoundException("Rental not found");
+                throw new NotFoundException(RentalExceptionMessages.NotFound);
 
             if (!IsRentalChanged(rental, command)) 
                 return Unit.Value;
 
             var isRentalCanBeUpdated = await IsRentalCanBeUpdated(command);
             if (!isRentalCanBeUpdated)
-                throw new ConflictException("Rental can not be updated");
+                throw new ConflictException(RentalExceptionMessages.Conflict);
 
             rental.Units = command.Units;
             rental.PreparationTimeInDays = command.PreparationTimeInDays;

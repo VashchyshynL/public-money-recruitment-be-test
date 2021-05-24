@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using VacationRental.Application.Common.Constants;
 
 namespace VacationRental.Application.Bookings.Queries.GetBookingById
 {
@@ -7,7 +8,7 @@ namespace VacationRental.Application.Bookings.Queries.GetBookingById
         public GetBookingByIdQueryValidator()
         {
             RuleFor(b => b.BookingId)
-                .GreaterThan(0).WithMessage("BookingId should be greater than 0");
+                .GreaterThan(0).WithMessage(BookingValidationMessages.PositiveId);
         }
     }
 }

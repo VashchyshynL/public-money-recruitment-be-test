@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using VacationRental.Application.Common.Constants;
 
 namespace VacationRental.Application.Rentals.Commands.UpdateRental
 {
@@ -7,13 +8,13 @@ namespace VacationRental.Application.Rentals.Commands.UpdateRental
         public UpdateRentalCommandValidator()
         {
             RuleFor(b => b.RentalId)
-                .GreaterThan(0).WithMessage("RentalId should be greater than 0");
+                .GreaterThan(0).WithMessage(RentalValidationMessages.PositiveId);
 
             RuleFor(r => r.Units)
-                .GreaterThan(0).WithMessage("Number of units should be greater that 0");
+                .GreaterThan(0).WithMessage(RentalValidationMessages.PositiveUnits);
 
             RuleFor(r => r.PreparationTimeInDays)
-                .GreaterThanOrEqualTo(0).WithMessage("Preparation time (in days) should be greater or equal to 0");
+                .GreaterThanOrEqualTo(0).WithMessage(RentalValidationMessages.PositivePreparationTime);
         }
     }
 }

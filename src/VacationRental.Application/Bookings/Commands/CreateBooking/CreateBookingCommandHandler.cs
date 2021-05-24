@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
+using VacationRental.Application.Common.Constants;
 using VacationRental.Application.Common.Exceptions;
 using VacationRental.Application.Common.Interfaces;
 using VacationRental.Application.Common.Models;
@@ -27,7 +28,7 @@ namespace VacationRental.Application.Bookings.Commands.CreateBooking
             var rental = await _unitOfWork.Rentals.GetByIdAsync(command.RentalId);
 
             if (rental == null)
-                throw new ValidationException(nameof(command.RentalId), "Rental not found");
+                throw new ValidationException(nameof(command.RentalId), RentalExceptionMessages.NotFound);
 
             var overlappingBookings = 
                 await _unitOfWork.Bookings.GetOverlappingBookings(rental.Id, rental.PreparationTimeInDays, command.Start, command.End);
@@ -61,7 +62,7 @@ namespace VacationRental.Application.Bookings.Commands.CreateBooking
                 }
             }
 
-            throw new ConflictException("Booking not available");
+            throw new ConflictException(BookingExceptionMessages.NotAvailable);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using VacationRental.Application.Common.Constants;
 
 namespace VacationRental.Application.Bookings.Commands.CreateBooking
 {
@@ -6,11 +7,11 @@ namespace VacationRental.Application.Bookings.Commands.CreateBooking
     {
         public CreateBookingCommandValidator()
         {
-            RuleFor(b => b.Nights)
-                .GreaterThan(0).WithMessage("Nights must be positive");
-
             RuleFor(b => b.RentalId)
-                .GreaterThan(0).WithMessage("RentalId should be greater than 0");
+                .GreaterThan(0).WithMessage(RentalValidationMessages.PositiveId);
+
+            RuleFor(b => b.Nights)
+                .GreaterThan(0).WithMessage(BookingValidationMessages.PositiveNights);
         }
     }
 }
