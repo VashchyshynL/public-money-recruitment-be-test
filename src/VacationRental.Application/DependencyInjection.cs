@@ -4,6 +4,8 @@ using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using VacationRental.Application.Common.Behaviors;
+using VacationRental.Application.Common.Interfaces;
+using VacationRental.Application.Common.Providers;
 
 namespace VacationRental.Application
 {
@@ -16,6 +18,7 @@ namespace VacationRental.Application
             services.AddMediatR(Assembly.GetExecutingAssembly());
             
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+            services.AddTransient<IDateProvider, DateProvider>();
 
             return services;
         }
