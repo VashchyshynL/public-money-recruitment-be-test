@@ -14,6 +14,7 @@ namespace VacationRental.Application.UnitTests.Rentals
     {
         private readonly UpdateRentalCommandHandler _sut;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+        private readonly Mock<IDateProvider> _dateProviderMock;
         private readonly Mock<IBookingsRepository> _bookingsRepositoryMock;
         private readonly Mock<IRentalsRepository> _rentalsRepositoryMock;
 
@@ -26,7 +27,9 @@ namespace VacationRental.Application.UnitTests.Rentals
             _unitOfWorkMock.Setup(u => u.Bookings).Returns(_bookingsRepositoryMock.Object);
             _unitOfWorkMock.Setup(u => u.Rentals).Returns(_rentalsRepositoryMock.Object);
 
-            _sut = new UpdateRentalCommandHandler(_unitOfWorkMock.Object);
+            _dateProviderMock = new Mock<IDateProvider>();
+
+            _sut = new UpdateRentalCommandHandler(_unitOfWorkMock.Object, _dateProviderMock.Object);
         }
 
         [Fact]
@@ -91,9 +94,13 @@ namespace VacationRental.Application.UnitTests.Rentals
                 .Setup(b => b.GetByIdAsync(rental.Id))
                 .ReturnsAsync(rental);
 
+            _dateProviderMock
+                .Setup(p => p.Now)
+                .Returns(DateTime.MinValue);
+
             _bookingsRepositoryMock
                 .Setup(b => b.GetOverlappingBookings(command.RentalId, command.PreparationTimeInDays,
-                    It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                    DateTime.MinValue, DateTime.MaxValue.AddDays(-command.PreparationTimeInDays)))
                 .ReturnsAsync(new[] { new Booking { Id = 1, RentalId = rental.Id} });
 
             // Act

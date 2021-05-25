@@ -12,10 +12,12 @@ namespace VacationRental.Application.Rentals.Commands.UpdateRental
     public class UpdateRentalCommandHandler : IRequestHandler<UpdateRentalCommand>
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IDateProvider _dateProvider;
 
-        public UpdateRentalCommandHandler(IUnitOfWork unitOfWork)
+        public UpdateRentalCommandHandler(IUnitOfWork unitOfWork, IDateProvider dateProvider)
         {
             _unitOfWork = unitOfWork;
+            _dateProvider = dateProvider;
         }
 
         public async Task<Unit> Handle(UpdateRentalCommand command, CancellationToken cancellationToken)
@@ -48,7 +50,7 @@ namespace VacationRental.Application.Rentals.Commands.UpdateRental
         {
             var overlappingBookings = 
                 await _unitOfWork.Bookings.GetOverlappingBookings(updateCommand.RentalId, updateCommand.PreparationTimeInDays, 
-                    DateTime.Now, DateTime.MaxValue.AddDays(-updateCommand.PreparationTimeInDays));
+                    _dateProvider.Now, DateTime.MaxValue.AddDays(-updateCommand.PreparationTimeInDays));
 
             return overlappingBookings.Count <= updateCommand.Units;
         }
