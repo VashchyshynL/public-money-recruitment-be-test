@@ -20,9 +20,9 @@ namespace VacationRental.Infrastructure.Persistence.Repositories
                 .AsNoTracking()
                 .Where(b => 
                     b.RentalId == rentalId 
-                    && ((b.Start <= startDate && b.End.AddDays(preparationDays) > startDate)
-                        || (b.Start < endDate.AddDays(preparationDays) && b.End.AddDays(preparationDays) >= endDate.AddDays(preparationDays))
-                        || (b.Start > startDate && b.End.AddDays(preparationDays) < endDate.AddDays(preparationDays))))
+                    && ((b.Start <= startDate && b.End.AddDays(preparationDays) > startDate) // Right overlap
+                        || (b.Start < endDate.AddDays(preparationDays) && b.End.AddDays(preparationDays) >= endDate.AddDays(preparationDays)) // Left overlap
+                        || (b.Start > startDate && b.End.AddDays(preparationDays) < endDate.AddDays(preparationDays)))) // Full overlap
                 .ToArrayAsync();
         }
     }

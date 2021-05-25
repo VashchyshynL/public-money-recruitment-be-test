@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationRental.Infrastructu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationRental.Application.UnitTests", "tests\VacationRental.Application.UnitTests\VacationRental.Application.UnitTests.csproj", "{9E157E09-F53F-4447-B237-A20BE83E1623}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationRental.Infrastructure.UnitTests", "tests\VacationRental.Infrastructure.UnitTests\VacationRental.Infrastructure.UnitTests.csproj", "{6CFED520-AEF2-4535-8BA2-EF9BA62B561B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{9E157E09-F53F-4447-B237-A20BE83E1623}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9E157E09-F53F-4447-B237-A20BE83E1623}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9E157E09-F53F-4447-B237-A20BE83E1623}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CFED520-AEF2-4535-8BA2-EF9BA62B561B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CFED520-AEF2-4535-8BA2-EF9BA62B561B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CFED520-AEF2-4535-8BA2-EF9BA62B561B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CFED520-AEF2-4535-8BA2-EF9BA62B561B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,6 +66,7 @@ Global
 		{EA7CE8EF-38F3-4E28-88D2-203D6A5F6C3D} = {2E4D2FE2-3218-46AA-AA50-F91AF7CB2A5D}
 		{F9BF17CC-37FB-4347-8ED2-1DA0D17B62AA} = {2E4D2FE2-3218-46AA-AA50-F91AF7CB2A5D}
 		{9E157E09-F53F-4447-B237-A20BE83E1623} = {F9827C89-E060-4672-8DFE-86D663DF9BF2}
+		{6CFED520-AEF2-4535-8BA2-EF9BA62B561B} = {F9827C89-E060-4672-8DFE-86D663DF9BF2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6A5319C5-4F21-41BF-B8A7-BC45868FEC89}
